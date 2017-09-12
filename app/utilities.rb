@@ -181,7 +181,7 @@ end
 # see if any of the items in the array start with the provided text
 def array_item_starts_with(array, text)
   found = false
-  if array.present?
+  if array.class == Array && array.length > 0
     array.each do |item|
       if item.start_with?(text)
         found = true
