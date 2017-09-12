@@ -178,6 +178,20 @@ def pull_out_ids(search_results)
   end
 end
 
+# see if any of the items in the array start with the provided text
+def array_item_starts_with(array, text)
+  found = false
+  if array.present?
+    array.each do |item|
+      if item.start_with?(text)
+        found = true
+        break
+      end
+    end
+  end
+  return found
+end
+
 
 # create sql for insert statements
 def create_sql_insert(mysql, json, source, locale)
