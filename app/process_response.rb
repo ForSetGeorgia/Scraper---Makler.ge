@@ -75,7 +75,7 @@ def process_response(response, post_date)
 
         if !json[:details][key].nil? && json[:details][key].length > 0
           # if this is a sale price, pull out the price and price per sq meter
-          if @sale_keys.include?(key) && !@non_number_price_text.include?(json[:details][key])
+          if @sale_keys.include?(key) && !array_item_starts_with(@non_number_price_text, json[:details][key])
             prices = json[:details][key].split('/')
             price_ary = prices[0].strip.split(' ')
 
@@ -111,7 +111,7 @@ def process_response(response, post_date)
 
 
           # if this is a rent price, pull out the price and price per sq meter
-          elsif @rent_keys.include?(key) && !@non_number_price_text.include?(json[:details][key])
+          elsif @rent_keys.include?(key) && !array_item_starts_with(@non_number_price_text, json[:details][key])
             prices = json[:details][key].split('/')
             price_ary = prices[0].strip.split(' ')
 
