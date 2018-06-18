@@ -2,21 +2,24 @@ require_relative 'environment'
 
 def make_requests
   #initiate hydra
-  hydra = Typhoeus::Hydra.new(max_concurrency: 20)
+  hydra = Typhoeus::Hydra.new(max_concurrency: @max_concurrency)
   request = nil
 
   # pull in first search results page
   url = @serach_url + @lang_param + @locales[:ka][:id]
 
-  doc = Nokogiri::HTML(open(url))
+  response = Typhoeus.get(url, :headers=>{"User-Agent" => @user_agent}, followlocation: true, ssl_verifypeer: false, ssl_verifyhost: 0)
+  doc = Nokogiri::HTML(response.response_body)
 
   # get the number of pages of search results that exist
   # - get the p param out of the last page pagination link
   last_page = 50 # just give it a default value
   pagination_links = doc.css('.pagination a')
+
   if pagination_links.length > 0
     last_page = get_param_value(pagination_links[pagination_links.length-1]['href'], 'p')
   end
+
   last_page = last_page.to_i if !last_page.nil?
 
   # get all of the ids that are new since the last run
@@ -35,9 +38,10 @@ def make_requests
     url = @serach_url + @lang_param + @locales[:ka][:id] + @page_param + i.to_s
 
     # get the html
-    doc = Nokogiri::HTML(open(url))
+    response = Typhoeus.get(url, :headers=>{"User-Agent" => @user_agent}, followlocation: true, ssl_verifypeer: false, ssl_verifyhost: 0)
+    doc = Nokogiri::HTML(response.response_body)
 
-    search_results = doc.css('td.table_content div.main_search > table > tr')
+    search_results = doc.css('td.table_content div.main_search > table > tbody > tr')
 
     # if the search results has either no response, stop
     if search_results.length == 0
@@ -72,7 +76,8 @@ def make_requests
 
         # build the url
         url = @posting_url + posting[:id] + @lang_param + @locales[locale][:id]
-        request = Typhoeus::Request.new("#{url}", followlocation: true)
+        request = Typhoeus::Request.new("#{url}",
+                    :headers=>{"User-Agent" => @user_agent}, followlocation: true, ssl_verifypeer: false, ssl_verifyhost: 0)
 
         request.on_complete do |response|
           if response.success?

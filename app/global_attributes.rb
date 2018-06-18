@@ -1,5 +1,8 @@
 require_relative 'locales'
 
+@user_agent = "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101 Firefox/60.0"
+@max_concurrency = 10
+
 @statistics_sheet = StatisticsSheet.new
 
 @data_files_log = CustomLogger.new('Data Files Log', 'data_files.log')
@@ -16,8 +19,8 @@ require_relative 'locales'
 
 
 # starting url
-@posting_url = "http://makler.ge/?pg=ann&id="
-@serach_url = "http://makler.ge/?pg=search&cat=-1&tp=-1&city_id=-1&raion_id=0&price_f=&price_t=&valuta=2&sart_f=&sart_t=&rooms_f=&rooms_t=&ubani_id=0&street_id=0&parti_f=&parti_t=&mdgomareoba=0&remont=0&project=0&xedi=0&metro_id=0&is_detailed_search=2&sb=d"
+@posting_url = "http://www.makler.ge/?pg=ann&id="
+@serach_url = "http://www.makler.ge/?pg=search&cat=-1&tp=-1&city_id=-1&raion_id=0&price_f=&price_t=&valuta=2&sart_f=&sart_t=&rooms_f=&rooms_t=&ubani_id=0&street_id=0&parti_f=&parti_t=&mdgomareoba=0&remont=0&project=0&xedi=0&metro_id=0&is_detailed_search=2&sb=d"
 @page_param = "&p="
 @lang_param = "&lan="
 

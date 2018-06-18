@@ -155,26 +155,32 @@ end
 def pull_out_ids(search_results)
   search_results.each do |search_result|
     image_link = search_result.css('div.ann_thmb a')[0]
-    post_id = get_param_value(image_link['href'], 'id')
 
-    post_date_str = search_result.css('.fge .float_right .orange_num')[0].text
-    post_date = Date.strptime(post_date_str, '%d.%m.%Y')
+    # ADDED 18 JUNE 2018
+    # they have a hidden ad with an old date that can cause the scraper to stop
+    # - if the url starts with init.php, then skip it
+    if (!image_link['href'].start_with?('/init.php'))
 
-    next if post_id.nil?
+      post_id = get_param_value(image_link['href'], 'id')
+      post_date_str = search_result.css('.fge .float_right .orange_num')[0].text
+      post_date = Date.strptime(post_date_str, '%d.%m.%Y')
 
-    if post_date < @earliest_day_to_scrape || reached_max_num_ids_to_scrape
-      @finished_scraping_new_post_ids = true
-      break
+      next if post_id.nil?
+
+      if post_date < @earliest_day_to_scrape || reached_max_num_ids_to_scrape
+        @finished_scraping_new_post_ids = true
+        break
+      end
+
+      @num_ids_scraped += 1
+
+      if posting_is_duplicate(post_id, post_date)
+        @statistics_sheet.increase_num_duplicate_postings_found_by_1
+        next
+      end
+
+      @status.save_new_posting_to_process(post_id, post_date)
     end
-
-    @num_ids_scraped += 1
-
-    if posting_is_duplicate(post_id, post_date)
-      @statistics_sheet.increase_num_duplicate_postings_found_by_1
-      next
-    end
-
-    @status.save_new_posting_to_process(post_id, post_date)
   end
 end
 
