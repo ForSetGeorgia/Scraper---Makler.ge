@@ -160,7 +160,6 @@ def pull_out_ids(search_results)
     # they have a hidden ad with an old date that can cause the scraper to stop
     # - if the url starts with init.php, then skip it
     if (!image_link['href'].start_with?('/init.php'))
-
       post_id = get_param_value(image_link['href'], 'id')
       post_date_str = search_result.css('.fge .float_right .orange_num')[0].text
       post_date = Date.strptime(post_date_str, '%d.%m.%Y')

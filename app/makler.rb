@@ -41,7 +41,7 @@ def make_requests
     response = Typhoeus.get(url, :headers=>{"User-Agent" => @user_agent}, followlocation: true, ssl_verifypeer: false, ssl_verifyhost: 0)
     doc = Nokogiri::HTML(response.response_body)
 
-    search_results = doc.css('td.table_content div.main_search > table > tbody > tr')
+    search_results = doc.css('td.table_content div.main_search tr')
 
     # if the search results has either no response, stop
     if search_results.length == 0
@@ -53,6 +53,7 @@ def make_requests
     pull_out_ids(search_results)
 
     i+=1
+
   end
 
   num_ids = @status.num_json_ids_to_process
@@ -72,6 +73,7 @@ def make_requests
     if @status.json_ids_to_process[locale].length > 0
       postings = @status.json_ids_to_process[locale].dup
       postings.each do |posting|
+
         @statistics_sheet.increase_num_ids_processed_by_1
 
         # build the url
